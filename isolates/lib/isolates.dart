@@ -1,17 +1,3 @@
-// In dart every event runs on a single thread, even futures
-
-// Mutator (single) thread -> Is where the events are dispatched
-// Event -> instruction in dart ->  print(1 + 3)
-// Event queue -> list of events
-// Micro task queue -> list of events with higher priority (Micro task Futures are calculated first than other futures)
-// Event loop -> Manager who processes events
-// Event handler -> Decides what to do with the events, wait and process other events if they are future (asynchronous)
-// Isolate heap vm memory keep a references to futures and events that are resolved
-
-// Isolates have other threads for maintenance (garbage collection, etc.)
-
-// Isolates groups -> x amount of isolates share the same memory, and make easier to make them communicate
-
 import 'dart:async';
 
 void futureExecutionOrder() {
@@ -61,11 +47,11 @@ Stream<int> produceDoubled(int n) async* {
   }
 }
 
-//
+// Future execution order
 
 void futures() {
-  final a = Future(() => 1).then((value) => print(value));
-  final b = Future(() => Future(() => 2)).then((value) => print(value));
+  final a = Future(() => 1).then(print);
+  final b = Future(() => Future(() => 2)).then(print);
 
   Future.delayed(Duration(seconds: 3), () => 3).then(print);
 
@@ -82,7 +68,7 @@ void futures() {
   // Then statements run immediately (as soon as the Future resolves), if there were chained then's they will be called
   // If another Future is started in then it will be added in event queue
   Future(() => 1)
-      .then((value) => print(value))
+      .then(print)
       .onError((error, stackTrace) => print(error))
       .whenComplete(() => print('Finally')); // Like finally on try catch
 }
@@ -128,3 +114,17 @@ void streams() async {
     print('AWAITED $element');
   });
 }
+
+// In dart every event runs on a single thread, even futures
+
+// Mutator (single) thread -> Is where the events are dispatched
+// Event -> instruction in dart ->  print(1 + 3)
+// Event queue -> list of events
+// Micro task queue -> list of events with higher priority (Micro task Futures are calculated first than other futures)
+// Event loop -> Manager who processes events
+// Event handler -> Decides what to do with the events, wait and process other events if they are future (asynchronous)
+// Isolate heap vm memory keep a references to futures and events that are resolved
+
+// Isolates have other threads for maintenance (garbage collection, etc.)
+
+// Isolates groups -> x amount of isolates share the same memory, and make easier to make them communicate
